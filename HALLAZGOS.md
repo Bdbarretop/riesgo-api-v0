@@ -14,7 +14,7 @@
 |----|--------------------|-------|------------------|----------------------|----------------------|-----------------|---------------------|
 | H1 | *(ejemplo de FORMATO, no un defecto de este repositorio)* `GET /ping` responde sin cabecera `Cache-Control` | El handler no declara política de caché | M2 · 2. El protocolo HTTP y la autenticación | `v0-semilla` | `curl -sI localhost:8000/ping \| grep -ci cache-control` | `0` | Se añade la cabecera en la respuesta |
 | H2 | `requirements.txt` no fija versiones de sus dependencias | Las 7 dependencias se declaran sin `==`, por lo que un `pip install` en máquina nueva puede traer versiones distintas y romper la reproducibilidad | M2 · 5. requirements.txt y la reproducibilidad | `v0-semilla` | `grep -c "==" requirements.txt` | `0` | Se fijan las 7 dependencias con `==` a las versiones instaladas en un venv limpio |
-| H3 | | | | | | | |
+| H3 | `config.py` contiene credenciales en texto plano (`API_KEY` y `CLAVE_FIRMA`) versionadas en el repositorio | Los secretos se declararon como constantes hardcodeadas en un archivo que forma parte del historial de Git, expuestos a cualquiera con acceso al repo | M1 · 5. Git y GitHub para investigadores | `v0-semilla` | `grep -cE "^(API_KEY\|CLAVE_FIRMA) *=" config.py` | `2` | Se eliminan las dos constantes (nunca se usan en el código) |
 | H4 | | | | | | | |
 | H5 | | | | | | | |
 | H6 | | | | | | | |
