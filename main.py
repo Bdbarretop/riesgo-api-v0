@@ -9,10 +9,11 @@ from pathlib import Path
 from fastapi import FastAPI, Response
 
 import config
-from dominio import EvaluadorRiesgo, buscar_siniestro, cargar_siniestros
+from dominio import EvaluadorRiesgo, RepositorioEvaluaciones, buscar_siniestro, cargar_siniestros
 
 BASE = Path(__file__).parent
 app = FastAPI(title="Riesgo API", version="0.1.0")
+repo_evaluaciones = RepositorioEvaluaciones()
 
 
 @app.post("/score")
@@ -28,7 +29,7 @@ async def score(payload: dict):
     with open(BASE / config.RUTA_MODELO, "rb") as fh:
         modelo = pickle.load(fh)
 
-    evaluador = EvaluadorRiesgo(payload["poliza"])
+    evaluador = EvaluadorRiesgo(payload["poliza"], repositorio=repo_evaluaciones)
     puntaje = evaluador.puntuar(modelo, payload)
     evaluador.anotar(puntaje)
 
@@ -41,7 +42,7 @@ async def score(payload: dict):
 
 @app.get("/historial")
 async def historial():
-    return {"evaluaciones": EvaluadorRiesgo.historial}
+    return {"evaluaciones": repo_evaluaciones.listar()}
 
 
 @app.get("/siniestros/{id_siniestro}")
